@@ -1,3 +1,4 @@
+import { describe, expect, it } from "vitest";
 import { SchoolActionKind, schoolReducer } from "../src/school-context";
 
 describe("School reducer test", () => {
