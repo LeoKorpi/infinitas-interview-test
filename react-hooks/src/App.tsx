@@ -1,11 +1,7 @@
 import { useState } from "react";
-import {
-  SchoolActionKind,
-  useSchool,
-  useSchoolDispatch,
-} from "./school-context";
-import infinitasLogo from "/infinitas-logo.svg";
 import "./App.css";
+import { SchoolActionKind, useSchool, useSchoolDispatch } from "./school-context";
+import infinitasLogo from "/infinitas-logo.svg";
 
 function App() {
   const school = useSchool();
@@ -15,15 +11,18 @@ function App() {
   const [updatedStudentName, setUpdatedStudentName] = useState<string>("");
 
   const [teacherEditingId, setTeacherEditingId] = useState<string | null>(null);
-  const [newAssignedStudentId, setNewAssignedStudentId] = useState<
-    string | null
-  >(null);
+  const [newAssignedStudentId, setNewAssignedStudentId] = useState<string | null>(null);
 
   const handleTeacherSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
     const target = event.currentTarget;
     const teacherName = target.teacher.value;
+
+    if (!teacherName || !teacherName.trim()) {
+      alert("The teacher's name cannot be null: ");
+      return;
+    }
     const id = crypto.randomUUID();
     schoolDispatch?.({
       type: SchoolActionKind.ADD_TEACHER,
@@ -38,6 +37,12 @@ function App() {
 
     const target = event.currentTarget;
     const studentName = target.student.value;
+
+    if (!studentName || !studentName.trim()) {
+      alert("The student's name cannot be null: ");
+      return;
+    }
+
     const id = crypto.randomUUID();
     schoolDispatch?.({
       type: SchoolActionKind.ADD_STUDENT,
@@ -77,8 +82,15 @@ function App() {
   return (
     <div className="App">
       <div>
-        <a href="/" target="_blank">
-          <img src={infinitasLogo} className="logo" alt="Infinitas logo" />
+        <a
+          href="/"
+          target="_blank"
+        >
+          <img
+            src={infinitasLogo}
+            className="logo"
+            alt="Infinitas logo"
+          />
         </a>
       </div>
       <h1>IL Interview</h1>
@@ -101,25 +113,34 @@ function App() {
                   <td>
                     <ul>
                       {teacher.students.map((s) => (
-                        <li>
-                          {school?.students.map((s1) =>
-                            s === s1.id ? s1.name : ""
-                          )}
+                        <li key={s}>
+                          {school?.students.map((s1) => (s === s1.id ? s1.name : ""))}
                         </li>
                       ))}
                     </ul>
                     {teacher.id === teacherEditingId ? (
                       <>
                         <select
+                          key={teacher.id}
                           value={newAssignedStudentId || ""}
-                          onChange={(e) =>
-                            setNewAssignedStudentId(e.target.value)
-                          }
+                          onChange={(e) => setNewAssignedStudentId(e.target.value)}
                         >
                           <option value={""}></option>
-                          {school?.students.map((student) => (
-                            <option value={student.id}>{student.name}</option>
-                          ))}
+                          {school?.students
+                            .filter(
+                              (student) =>
+                                !school?.teachers.some((teacher) =>
+                                  teacher.students.includes(student.id)
+                                )
+                            )
+                            .map((student) => (
+                              <option
+                                key={student.id}
+                                value={student.id}
+                              >
+                                {student.name}
+                              </option>
+                            ))}
                         </select>
                         <button onClick={handleAssignStudent}>Assign</button>
                       </>
@@ -137,7 +158,11 @@ function App() {
         <hr></hr>
         <form onSubmit={handleTeacherSubmit}>
           <label htmlFor="teacher">Teacher</label>
-          <input type="text" id="teacher" name="teacher" />
+          <input
+            type="text"
+            id="teacher"
+            name="teacher"
+          />
           <button type="submit">Add Teacher</button>
         </form>
       </div>
@@ -163,16 +188,12 @@ function App() {
                         <input
                           type="text"
                           value={updatedStudentName}
-                          onChange={(e) =>
-                            setUpdatedStudentName(e.target.value)
-                          }
+                          onChange={(e) => setUpdatedStudentName(e.target.value)}
                         ></input>
                         <button onClick={handleUpdateStudent}>Done</button>
                       </>
                     ) : (
-                      <button onClick={() => setUserEditingId(student.id)}>
-                        Update
-                      </button>
+                      <button onClick={() => setUserEditingId(student.id)}>Update</button>
                     )}
                   </td>
                 </tr>
@@ -182,8 +203,12 @@ function App() {
         </table>
         <hr></hr>
         <form onSubmit={handleStudentSubmit}>
-          <label htmlFor="student" >Student</label>
-          <input type="text" id="student" name="student" />
+          <label htmlFor="student">Student</label>
+          <input
+            type="text"
+            id="student"
+            name="student"
+          />
           <button type="submit">Add Student</button>
         </form>
       </div>
