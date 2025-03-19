@@ -17,20 +17,24 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
-.section > form {
+section > form {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
 }
 
-.section > table, th, td {
+section > table,
+th,
+td {
   border: 1px solid white;
   border-collapse: collapse;
   width: 100%;
 }
 
-.section > table, th, td {
+section > table,
+th,
+td {
   border: 1px solid white;
   border-collapse: collapse;
   padding: 10px;

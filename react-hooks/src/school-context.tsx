@@ -45,17 +45,14 @@ export type SchoolAction =
     };
 
 const SchoolContext = createContext<InitialState | null>(null);
-const SchoolDispatchContext =
-  createContext<React.Dispatch<SchoolAction> | null>(null);
+const SchoolDispatchContext = createContext<React.Dispatch<SchoolAction> | null>(null);
 
 export function SchoolProvider({ children }: { children?: React.ReactNode }) {
   const [school, dispatch] = useReducer(schoolReducer, initialState);
 
   return (
     <SchoolContext.Provider value={school}>
-      <SchoolDispatchContext.Provider value={dispatch}>
-        {children}
-      </SchoolDispatchContext.Provider>
+      <SchoolDispatchContext.Provider value={dispatch}>{children}</SchoolDispatchContext.Provider>
     </SchoolContext.Provider>
   );
 }
@@ -68,10 +65,7 @@ export function useSchoolDispatch() {
   return useContext(SchoolDispatchContext);
 }
 
-export function schoolReducer(
-  state: InitialState,
-  action: SchoolAction
-): InitialState {
+export function schoolReducer(state: InitialState, action: SchoolAction): InitialState {
   switch (action.type) {
     case SchoolActionKind.ADD_TEACHER:
       return { ...state, teachers: [...state.teachers, action.payload] };
